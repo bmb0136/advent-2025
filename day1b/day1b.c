@@ -28,17 +28,17 @@ int main(int argc, char **argv) {
     char direction = line[0];
     int amount = atoi(line + 1);
 
-    if (direction == 'L') {
-      position -= amount;
-    } else {
-      position += amount;
-    }
+    for (size_t i = 0; i < amount; i++) {
+      position += direction == 'L' ? -1 : 1;
+      if (position < 0) {
+        position = 99;
+      } else if (position > 99) {
+        position = 0;
+      }
 
-    // Wrap around (extra mod handles negatives safely)
-    position = ((position % 100) + 100) % 100;
-
-    if (position == 0) {
-      answer++;
+      if (position == 0) {
+        answer++;
+      }
     }
   }
 
