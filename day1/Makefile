@@ -2,7 +2,7 @@ PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
 
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -Werror
 
 .PHONY: clean day1
 
