@@ -22,9 +22,12 @@
         ];
 
         perSystem =
-          { ... }:
+          { pkgs, ... }:
           {
             treefmt = import ./treefmt.nix;
+
+            packages.day1a = pkgs.callPackage ./day1a {};
+            packages.day1b = pkgs.callPackage ./day1b {};
           };
       }
     );

@@ -4,10 +4,10 @@ BINDIR ?= $(PREFIX)/bin
 CC = gcc
 CFLAGS = -Wall -Werror
 
-.PHONY: clean day1
+.PHONY: clean day1a
 
-day1: day1.o
-	$(CC) $(CFLAGS) $^ -o day1
+day1a: day1a.o
+	$(CC) $(CFLAGS) $^ -o day1a
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@
@@ -17,4 +17,4 @@ clean:
 
 install:
 	install -d $(BINDIR)
-	install -m 755 day1 $(BINDIR)/day1
+	install -m 755 day1a $(BINDIR)/day1a
