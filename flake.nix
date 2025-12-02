@@ -26,9 +26,9 @@
           {
             treefmt = import ./treefmt.nix;
 
-            packages.day1a = pkgs.callPackage ./day1a {};
-            packages.day1b = pkgs.callPackage ./day1b {};
-            packages.day2a = pkgs.callPackage ./day2a {};
+            packages.day1a = pkgs.callPackage ./day1a { };
+            packages.day1b = pkgs.callPackage ./day1b { };
+            packages.day2a = pkgs.callPackage ./day2a { };
           };
       }
     );

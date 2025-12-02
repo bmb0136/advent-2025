@@ -1,11 +1,12 @@
 {
-  pkgs ? import <nixpkgs> {},
+  pkgs ? import <nixpkgs> { },
   ...
-}: pkgs.stdenv.mkDerivation rec {
+}:
+pkgs.stdenv.mkDerivation rec {
   name = "day2a";
   src = ./.;
 
-  nativeBuildInputs = [pkgs.rustc];
+  nativeBuildInputs = [ pkgs.rustc ];
 
   buildPhase = ''
     rustc main.rs

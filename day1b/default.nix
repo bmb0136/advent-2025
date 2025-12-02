@@ -1,4 +1,8 @@
-{ pkgs ? import <nixpkgs> {}, ... }: pkgs.stdenv.mkDerivation {
+{
+  pkgs ? import <nixpkgs> { },
+  ...
+}:
+pkgs.stdenv.mkDerivation {
   name = "day1b";
   src = ./.;
   PREFIX = "\${out}";
