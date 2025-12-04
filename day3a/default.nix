@@ -1,8 +1,9 @@
 {
-  pkgs ? import <nixpkgs> {},
+  pkgs ? import <nixpkgs> { },
   buildGoModule ? pkgs.buildGoModule,
   ...
-}: buildGoModule {
+}:
+buildGoModule {
   name = "day3a";
   src = ./.;
   vendorHash = null;
