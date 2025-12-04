@@ -7,10 +7,10 @@ pkgs.stdenv.mkDerivation rec {
   src = ./.;
 
   nativeBuildInputs = [
-    pkgs.jdk25_headless
+    pkgs.jdk21_headless
   ];
   buildInputs = [
-    pkgs.jre
+    pkgs.jre25_minimal
     pkgs.makeWrapper
   ];
 
