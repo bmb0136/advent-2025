@@ -2,12 +2,12 @@
   pkgs ? import <nixpkgs> { },
   ...
 }:
-pkgs.stdenv.mkDerivationNoCC rec {
+pkgs.stdenv.mkDerivation rec {
   name = "day4a";
   src = ./.;
 
   nativeBuildInputs = [
-    pkgs.openjdk
+    pkgs.jdk25_headless
   ];
   buildInputs = [
     pkgs.jre
