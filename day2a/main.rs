@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 fn is_valid_id(id: i128) -> bool {
     let mut x = id;
     let mut digits = [0usize; 50];

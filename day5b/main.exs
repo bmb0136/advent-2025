@@ -1,26 +1,20 @@
 defmodule Day5 do
   def line_to_range(arr) do
     [a, b] = arr |> Enum.map(&(String.to_integer(&1)))
-    %{start: a, count: b - a + 1}
+    %{start: a, end: b}
   end
 
-  def get_longest(group) do
-    {_, vals} = group
-    Enum.max_by(vals, &(&1.count))
-  end
-
-  def get_shortest(group) do
-    {_, vals} = group
-    Enum.min_by(vals, &(&1.count))
+  def is_trivial_overlap?(r, fresh) do
+    fresh |> Enum.any?(&(r.start >= &1.start && r.end <= &1.end && r != &1))
   end
 
   def merge_pairs(ranges) do
-
     if length(ranges) == 1 do
-      ranges
+      [r1] = ranges
+      r1
     else
       [r1, r2] = ranges
-      [%{start: r1.start, count: min(r2.start - r1.start, r1.count)}, r2]
+      %{start: r1.start, end: min(r1.end, r2.start - 1)}
     end
   end
 end
@@ -30,17 +24,19 @@ end
 {:ok, input} = File.read(file_name)
 lines = String.split(input, "\n")
 
-fresh_count = Stream.filter(lines, &(&1 =~ "-"))
+fresh = lines
+  |> Stream.filter(&(&1 =~ "-"))
   |> Stream.map(&(&1 |> String.split("-")))
-  |> Stream.map(&(Day5.line_to_range(&1)))
-  |> Enum.group_by(&(&1.start))
-  |> Stream.map(&(Day5.get_longest(&1)))
-  |> Enum.sort_by(&(&1.start))
-  |> Enum.chunk_every(2, 1)
-  |> Stream.flat_map(&(Day5.merge_pairs(&1)))
-  |> Enum.group_by(&(&1.start))
-  |> Stream.map(&(Day5.get_shortest(&1)))
-  |> Stream.map(&(&1.count))
-  |> Enum.sum()
+  |> Enum.map(&(Day5.line_to_range(&1)))
 
-IO.puts("Answer: " <> Integer.to_string(fresh_count))
+fresh2 = fresh
+  |> Stream.filter(&(!Day5.is_trivial_overlap?(&1, fresh)))
+  |> Enum.sort_by(&(&1.start))
+
+fresh3 = fresh2
+  |> Enum.chunk_every(2, 1)
+  |> Stream.map(&(Day5.merge_pairs(&1)))
+  |> Stream.filter(&(&1.end >= &1.start))
+  |> Stream.map(&(&1.end - &1.start + 1))
+
+IO.puts("Answer: " <> Integer.to_string(Enum.sum(fresh3)))
