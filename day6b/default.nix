@@ -1,11 +1,15 @@
 {
-  pkgs ? import <nixpkgs> {},
+  pkgs ? import <nixpkgs> { },
   ...
-}: pkgs.stdenv.mkDerivation rec {
+}:
+pkgs.stdenv.mkDerivation rec {
   name = "day6b";
   src = ./.;
 
-  nativeBuildInputs = [ pkgs.kotlin pkgs.makeWrapper ];
+  nativeBuildInputs = [
+    pkgs.kotlin
+    pkgs.makeWrapper
+  ];
 
   buildPhase = ''
     kotlinc -d main.jar -include-runtime main.kt

@@ -1,10 +1,11 @@
 {
-  pkgs ? import <nixpkgs> {}
-}: pkgs.stdenv.mkDerivation rec {
+  pkgs ? import <nixpkgs> { },
+}:
+pkgs.stdenv.mkDerivation rec {
   name = "day5b";
   src = ./.;
 
-  nativeBuildInputs = [pkgs.makeWrapper];
+  nativeBuildInputs = [ pkgs.makeWrapper ];
 
   buildPhase = ''
     mkdir -p $out/share/elixir

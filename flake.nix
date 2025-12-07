@@ -22,16 +22,34 @@
         ];
 
         perSystem =
-          { self', pkgs, lib, ... }:
+          {
+            self',
+            pkgs,
+            lib,
+            ...
+          }:
+          let
+            names = builtins.attrNames self'.packages;
+            days = builtins.filter (lib.strings.hasInfix "day") names;
+            sorted = builtins.sort builtins.lessThan days;
+          in
           {
             treefmt = import ./treefmt.nix;
 
-            packages.default = let
-              names = builtins.attrNames self'.packages;
-              days = builtins.filter (lib.strings.hasInfix "day") names;
-              last = lib.lists.last (builtins.sort builtins.lessThan days);
-            in
-              self'.packages.${last};
+            packages.default = self'.packages.${lib.lists.last sorted};
+
+            packages.all = pkgs.writeShellApplication {
+              name = "all";
+
+              runtimeInputs = builtins.map (x: self'.packages.${x}) sorted;
+
+              text = ''
+                for x in ${lib.strings.join " " sorted}; do
+                  echo $x
+                  $x
+                done
+              '';
+            };
 
             packages.day1a = pkgs.callPackage ./day1a { };
             packages.day1b = pkgs.callPackage ./day1b { };
