@@ -22,9 +22,16 @@
         ];
 
         perSystem =
-          { pkgs, ... }:
+          { self', pkgs, lib, ... }:
           {
             treefmt = import ./treefmt.nix;
+
+            packages.default = let
+              names = builtins.attrNames self'.packages;
+              days = builtins.filter (lib.strings.hasInfix "day") names;
+              last = lib.lists.last (builtins.sort builtins.lessThan days);
+            in
+              self'.packages.${last};
 
             packages.day1a = pkgs.callPackage ./day1a { };
             packages.day1b = pkgs.callPackage ./day1b { };
