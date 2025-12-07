@@ -1,11 +1,12 @@
 {
-  pkgs ? import <nixpkgs> {},
+  pkgs ? import <nixpkgs> { },
   ...
-}: pkgs.stdenv.mkDerivation rec {
+}:
+pkgs.stdenv.mkDerivation rec {
   name = "day7a";
   src = ./.;
 
-  nativeBuildInputs = [pkgs.makeWrapper];
+  nativeBuildInputs = [ pkgs.makeWrapper ];
 
   installPhase = ''
     mkdir -p $out/share
