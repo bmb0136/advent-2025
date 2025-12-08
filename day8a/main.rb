@@ -34,37 +34,29 @@ def connect(a, b)
   end
 end
 
-distances = Array.new(boxes.length) { Array.new(boxes.length, 0) }
+distances = Array.new(boxes.length ** 2, 0)
 for i in 0...(boxes.length) do
   for j in 0...(boxes.length) do
-    if i == j then
-      distances[i][j] = Float::INFINITY
+    if i >= j then
+      distances[(i * boxes.length) + j] = Float::INFINITY
     else
-      distances[i][j] = Math.sqrt((boxes[i][0] - boxes[j][0]) ** 2 + (boxes[i][1] - boxes[j][1]) ** 2 + (boxes[i][2] - boxes[j][2]) ** 2)
+      distances[(i * boxes.length) + j] = [Math.sqrt((boxes[i][0] - boxes[j][0]) ** 2 + (boxes[i][1] - boxes[j][1]) ** 2 + (boxes[i][2] - boxes[j][2]) ** 2), i, j]
     end
   end
 end
 
-for _ in 1..(boxes.length / 2) do
-  mindex = [-1, -1]
-  min_val = Float::INFINITY
-  distances.each_with_index do |arr, i|
-    arr.each_with_index do |val, j|
-      if val < min_val then
-        mindex = [i, j]
-        min_val = val
-      end
-    end
-  end
-
-  i, j = mindex
+for _, i, j in (distances.sort_by { |d, _, _| d }).first(boxes.length / 2) do
+  #puts "Connecting #{i} (#{boxes[i]}) -> #{j} (#{boxes[j]})"
   connect(boxes[i], boxes[j])
-  distances[i][j] = Float::INFINITY
-  distances[j][i] = Float::INFINITY
+  #boxes.each { |box| puts "\t#{box.to_s.ljust(20)}#{find(box)}" }
 end
+
 
 freq = Hash.new 0
 
 boxes.each { |box| freq[find(box)] += 1 }
 
+#puts freq
+
+puts "# of circuits: #{freq.length}"
 puts "Answer: #{freq.values.sort.last(3).inject(1) { |acc, x| acc * x }}"
