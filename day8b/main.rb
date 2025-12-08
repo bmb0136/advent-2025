@@ -38,22 +38,30 @@ distances = Array.new(boxes.length ** 2, 0)
 for i in 0...(boxes.length) do
   for j in 0...(boxes.length) do
     if i >= j then
-      distances[(i * boxes.length) + j] = Float::INFINITY
+      distances[(i * boxes.length) + j] = [Float::INFINITY, i, j]
     else
       distances[(i * boxes.length) + j] = [Math.sqrt((boxes[i][0] - boxes[j][0]) ** 2 + (boxes[i][1] - boxes[j][1]) ** 2 + (boxes[i][2] - boxes[j][2]) ** 2), i, j]
     end
   end
 end
 
-for _, i, j in (distances.sort_by { |d, _, _| d }).first(1000) do
+for _, i, j in (distances.sort_by { |d, _, _| d }).filter { |d, _, _| d != Float::INFINITY } do
   #puts "Connecting #{i} (#{boxes[i]}) -> #{j} (#{boxes[j]})"
   connect(boxes[i], boxes[j])
-  #boxes.each { |box| puts "\t#{box.to_s.ljust(20)}#{find(box)}" }
+
+  c = find(boxes[0])
+  done = true
+  for k in 1...(boxes.length) do
+    if find(boxes[k]) != c then
+      done = false
+      break
+    end
+  end
+
+  if done then
+    puts "Answer: #{boxes[i][0] * boxes[j][0]}"
+    return
+  end
 end
 
 
-freq = Hash.new 0
-
-boxes.each { |box| freq[find(box)] += 1 }
-
-puts "Answer: #{freq.values.sort.last(3).inject(1) { |acc, x| acc * x }}"
