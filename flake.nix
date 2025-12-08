@@ -66,6 +66,7 @@
             packages.day7a = pkgs.callPackage ./day7a { };
             packages.day7b = pkgs.callPackage ./day7b { };
             packages.day8a = pkgs.callPackage ./day8a { };
+            packages.day8b = pkgs.callPackage ./day8b { };
           };
       }
     );
