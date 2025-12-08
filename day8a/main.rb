@@ -45,7 +45,7 @@ for i in 0...(boxes.length) do
   end
 end
 
-for _, i, j in (distances.sort_by { |d, _, _| d }).first(boxes.length / 2) do
+for _, i, j in (distances.sort_by { |d, _, _| d }).first(1000) do
   #puts "Connecting #{i} (#{boxes[i]}) -> #{j} (#{boxes[j]})"
   connect(boxes[i], boxes[j])
   #boxes.each { |box| puts "\t#{box.to_s.ljust(20)}#{find(box)}" }
@@ -56,7 +56,4 @@ freq = Hash.new 0
 
 boxes.each { |box| freq[find(box)] += 1 }
 
-#puts freq
-
-puts "# of circuits: #{freq.length}"
 puts "Answer: #{freq.values.sort.last(3).inject(1) { |acc, x| acc * x }}"
