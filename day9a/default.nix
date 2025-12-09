@@ -8,7 +8,7 @@ pkgs.stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     pkgs.makeWrapper
-    pkgs.ghc
+    (pkgs.haskellPackages.ghcWithPackages (p: with p; [split text]))
   ];
 
   buildPhase = ''
