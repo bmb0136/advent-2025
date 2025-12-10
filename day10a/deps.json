@@ -1,0 +1,17 @@
+[
+  {
+    "pname": "Microsoft.DotNet.ILCompiler",
+    "version": "9.0.9",
+    "hash": "sha256-vWH8hUk/jCzw1YoCQsh0M8/1L081nlv/3zr3RngbHsI="
+  },
+  {
+    "pname": "Microsoft.NET.ILLink.Tasks",
+    "version": "9.0.9",
+    "hash": "sha256-/ssHYWwMl3IyM3630KnM848KIw4a4fcV0GKQcPPSMw4="
+  },
+  {
+    "pname": "runtime.linux-x64.Microsoft.DotNet.ILCompiler",
+    "version": "9.0.9",
+    "hash": "sha256-fc9CyRFjwcg4BwFsa1SLCXc5k6fM55xwgdF5FbvLdDI="
+  }
+]

@@ -31,7 +31,8 @@
           let
             names = builtins.attrNames self'.packages;
             days = builtins.filter (lib.strings.hasInfix "day") names;
-            sorted = builtins.sort builtins.lessThan days;
+            sortFunc = x: y: if (builtins.stringLength x) < (builtins.stringLength y) then true else builtins.lessThan x y;
+            sorted = builtins.sort sortFunc days;
           in
           {
             treefmt = import ./treefmt.nix;
@@ -69,6 +70,7 @@
             packages.day8b = pkgs.callPackage ./day8b { };
             packages.day9a = pkgs.callPackage ./day9a { };
             packages.day9b = pkgs.callPackage ./day9b { };
+            packages.day10a = pkgs.callPackage ./day10a { };
           };
       }
     );
