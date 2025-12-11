@@ -101,8 +101,12 @@ isValidRect points rect =
   in let maxX = maximum xs
   in let minY = minimum ys
   in let maxY = maximum ys
+  {-
   in let allPoints = concat $ map (\x -> map (\y -> [x, y]) [minY..maxY]) [minX..maxX]
   in all (isInside points) allPoints
+  -}
+  in let boundaries = concat [map (\x -> [x, minY]) [minX..maxX], map (\x -> [x, maxY]) [minX..maxX], map (\y -> [minX, y]) [minY..maxY], map (\y -> [maxX, y]) [minY..maxY]]
+  in all (isInside points) boundaries
 
 day9 :: [String] -> IO ()
 day9 [] = do
