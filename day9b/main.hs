@@ -4,7 +4,39 @@ import Data.List.Split (splitOn)
 import qualified Data.Text as T
 import Data.Bits
 
-doesIntersect [px, py] ([x1, y1], [x2, y2]) =
+doesIntersectPosX [px, py] ([x1, y1], [x2, y2]) =
+  if x1 == x2 then -- vertical
+    py >= (min y1 y2) && py <= (max y1 y2) && px < x1
+  else if y1 == y2 then -- horizontal
+    py == y1 && px < x1
+  else
+    error "Should not happen"
+
+doesIntersectNegX [px, py] ([x1, y1], [x2, y2]) =
+  if x1 == x2 then -- vertical
+    py >= (min y1 y2) && py <= (max y1 y2) && px > x1
+  else if y1 == y2 then -- horizontal
+    py == y1 && px > x1
+  else
+    error "Should not happen"
+
+doesIntersectPosY [px, py] ([x1, y1], [x2, y2]) =
+  if x1 == x2 then -- vertical
+    px == x1 && py < y1
+  else if y1 == y2 then -- horizontal
+    px >= (min x1 x2) && px <= (max x1 x2) && py < y1
+  else
+    error "Should not happen"
+
+doesIntersectNegY [px, py] ([x1, y1], [x2, y2]) =
+  if x1 == x2 then -- vertical
+    px == x1 && py > y1
+  else if y1 == y2 then -- horizontal
+    px >= (min x1 x2) && px <= (max x1 x2) && py > y1
+  else
+    error "Should not happen"
+
+doesOverlap [px, py] ([x1, y1], [x2, y2]) =
   if x1 == x2 then -- vertical
     py >= (min y1 y2) && py <= (max y1 y2) && px == x1
   else if y1 == y2 then -- horizontal
@@ -16,12 +48,17 @@ doesIntersect [px, py] ([x1, y1], [x2, y2]) =
 isInside :: [[Int]] -> [Int] -> Bool
 isInside points p =
   let segments = zip points (tail points ++ [head points])
-  in let count = length $ (filter (doesIntersect p) segments)
-  in odd count
+  in let anyOverlap = any (doesOverlap p) segments
+  in let funcs = [doesIntersectPosX, doesIntersectNegX, doesIntersectPosY, doesIntersectNegY]
+  in let intersections = map (\f -> length $ filter (f p) segments) funcs
+  in let oddX = all odd [intersections !! 0, intersections !! 1]
+  in let oddY = all odd [intersections !! 2, intersections !! 3]
+  in anyOverlap || oddX || oddY
 
 test points p =
   let segments = zip points (tail points ++ [head points])
-  in (filter (doesIntersect p) segments)
+  in let funcs = [doesIntersectPosX, doesIntersectNegX, doesIntersectPosY, doesIntersectNegY]
+  in map (\f -> length $ filter (f p) segments) funcs
 
 strip = T.unpack . T.strip . T.pack
 
@@ -42,7 +79,7 @@ area :: [[Int]] -> Int
 area [[x1, y1], [x2, y2]] =
   let w = abs (x1 - x2)
   in let h = abs (y1 - y2)
-  in (w + 1) * (h + 1)
+  in if x1 == x2 || y1 == y2 then 0 else (w + 1) * (h + 1)
 
 rectPoints :: [[Int]] -> [[Int]]
 rectPoints [[x1, y1], [x2, y2]] =
@@ -57,10 +94,15 @@ rectPoints [[x1, y1], [x2, y2]] =
     [maxX, minY]
   ]
 
-avgPoint [[x1, y1], [x2, y2]] = [(x1 + x2) `div` 2, (y1 + y2) `div` 2]
-
 isValidRect points rect =
-  in all (\p -> isInside points p) (map avgPoint (pairs rect))
+  let xs = map (\p -> p !! 0) rect
+  in let ys = map (\p -> p !! 1) rect
+  in let minX = minimum xs
+  in let maxX = maximum xs
+  in let minY = minimum ys
+  in let maxY = maximum ys
+  in let allPoints = concat $ map (\x -> map (\y -> [x, y]) [minY..maxY]) [minX..maxX]
+  in all (isInside points) allPoints
 
 day9 :: [String] -> IO ()
 day9 [] = do
@@ -76,14 +118,6 @@ day9 [inputPath] = do
   let rects = map rectPoints (pairs points)
   let validRects = filter (isValidRect points) rects
   let corners = map (\r -> [(r !! 0), (r !! 2)]) validRects
-  print corners
-  putStrLn "---------------------------------"
-  print rects
-  putStrLn "---------------------------------"
-  print (test points [9,5])
-  print (test points [2,3])
-  print (test points [2,5])
-  print (test points [9,3])
   let answer = if length corners > 0 then maximum (map area corners) else -1
   putStrLn ("Answer: " ++ (show answer))
 
