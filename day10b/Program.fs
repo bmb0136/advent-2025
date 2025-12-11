@@ -21,26 +21,37 @@ let parseLine (line: string): Machine =
       |> Array.map Int32.Parse
   }
 
-let flipLight (lights: string) (i: int): string =
-  let arr = lights.ToCharArray()
-  Array.set arr i (if arr[i] = '#' then '.' else '#')
-  arr |> String
+
+let incCounter (jolts: int[]) (i: int): int[] =
+  let arr = jolts |> Array.copy
+  Array.set arr i (arr[i] + 1)
+  arr
+
+let compareJolts (m: Machine) (jolts: int[]) (func: int * int -> bool): bool =
+  (Array.zip jolts m.Joltage)
+  |> Array.map func
+  |> Array.fold (&&) true
+
+let joltsToKey (jolts: int[]): string =
+  jolts
+  |> Array.map string
+  |> String.concat "," 
 
 let rec findShortestPath (m: Machine): list<int> =
   let seen = System.Collections.Generic.HashSet<string>()
-  let rec bfs (queue: list<string * option<Step>>): option<Step> =
+  let rec bfs (queue: list<int[] * option<Step>>): option<Step> =
     match queue with
     | [] -> None
     | (current, prev) :: tail ->
-      if current = m.Goal then prev
+      if compareJolts m current (fun (x, y) -> x = y) then prev
       else 
         let asArr = m.Buttons |> List.ofArray
-        let adjacent = asArr |> List.mapi (fun (i: int) (buttons: int[]) -> (i, Array.fold flipLight current buttons))
-        let filtered = adjacent |> List.filter (fun (i: int, s: string) -> not (seen.Contains s))
-        List.fold (fun _ (_, x) -> seen.Add(x)) false filtered |> ignore
-        let next = filtered |> List.map (fun (i: int, s: string) -> (s, Some({ ButtonIndex = i; Previous = prev })))
+        let adjacent = asArr |> List.mapi (fun (i: int) (buttons: int[]) -> (i, Array.fold incCounter current buttons)) |> List.filter (fun (_, j) -> compareJolts m j (fun (x, y) -> x <= y))
+        let filtered = adjacent |> List.filter (fun (_, j) -> not (j |> joltsToKey |> seen.Contains)) 
+        List.fold (fun _ (_, x) -> x |> joltsToKey |> seen.Add) false filtered |> ignore
+        let next = filtered |> List.map (fun (i, s) -> (s, Some({ ButtonIndex = i; Previous = prev })))
         bfs (List.append tail next)
-  let startState = String.replicate m.Goal.Length "."
+  let startState = Array.zeroCreate m.Joltage.Length
   let rec traverse (ptr: option<Step>): seq<int> =
     match ptr with
     | None -> Seq.empty
@@ -52,7 +63,7 @@ let rec findShortestPath (m: Machine): list<int> =
 
 let day10 (file: string) =
   let lines = File.ReadAllLines(file)
-  let answer = lines |> Array.map (parseLine >> findShortestPath >> List.length) |> Array.sum
+  let answer = lines |> Array.Parallel.map (parseLine >> findShortestPath >> List.length) |> Array.sum
   printfn $"Answer: {answer}"
 
 [<EntryPoint>]
