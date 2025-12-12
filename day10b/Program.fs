@@ -98,7 +98,7 @@ let solve (m: Machine) =
 let day10 (file: string) =
   let lines = File.ReadAllLines(file)
   let ms = lines |> Array.map parseLine
-  let ans = ms |> Array.Parallel.map solve
+  let ans = ms |> Array.Parallel.map solve |> Array.sum
   printf "Answer: %d" ans
 
 [<EntryPoint>]
