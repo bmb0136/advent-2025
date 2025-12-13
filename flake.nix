@@ -73,6 +73,7 @@
             packages.day10a = pkgs.callPackage ./day10a { };
             packages.day10b = pkgs.callPackage ./day10b { };
             packages.day11a = pkgs.callPackage ./day11a { };
+            packages.day11b = pkgs.callPackage ./day11b { };
           };
       }
     );
